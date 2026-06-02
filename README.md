@@ -65,14 +65,14 @@ Medicare HMS is a web-based Hospital Management System built with **Flask**, **S
 
 ## Technology Stack
 
-| Technology | Usage |
-|------------|--------|
-| Flask | Backend Framework |
-| SQLite | Database |
-| HTML5 | Frontend Structure |
-| CSS3 | Styling |
-| JavaScript | Client-side Functionality |
-| Werkzeug | Password Security |
+| Technology |        Usage             |
+|------------|--------------------------|
+| Flask      | Backend Framework        |
+| SQLite     | Database                 |
+| HTML5      | Frontend Structure       |
+| CSS3       | Styling                  |
+| JavaScript | Client-side Functionality|
+| Werkzeug   | Password Security        |
 
 ---
 
