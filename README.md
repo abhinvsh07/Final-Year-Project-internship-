@@ -258,7 +258,7 @@ This project is intended for educational and academic purposes.
 
 ## Author
 
-**Abhi**
+**Abhinav Sharma**
 
 Hospital Management System developed using Flask and SQLite to simplify hospital administration, patient management, appointment scheduling, billing, and staff operations.
 
