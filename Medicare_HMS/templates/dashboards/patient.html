@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Dashboard{% endblock %}
+{% block page_title %}Patient Dashboard{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/patient" class="nav-link">Dashboard</a>
+<a href="/patient/appointments" class="nav-link">Appointments</a>
+<a href="/patient/records" class="nav-link">Medical Records</a>
+<a href="/patient/bills" class="nav-link">Bills</a>
+<a href="/patient/profile" class="nav-link">Profile</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-section">
+
+    <div class="admin-section-title">Overview</div>
+
+    <div class="row g-3">
+
+        <div class="col-md-3 ">
+            <div class="card p-3 admin-metric">
+                <h5>Total Appointments</h5>
+                <h3>{{ total_appointments }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 admin-metric">
+                <h5>Pending</h5>
+                <h3>{{ pending_appointments }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 admin-metric">
+                <h5>Completed</h5>
+                <h3>{{ completed_appointments }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 admin-metric">
+                <h5>Unpaid Bills</h5>
+                <h3>{{ unpaid_bills }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}

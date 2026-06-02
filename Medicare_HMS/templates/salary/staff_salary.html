@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}My Salary{% endblock %}
+{% block page_title %}My Salary{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/staff" class="nav-link">Dashboard</a>
+<a href="/staff/attendance" class="nav-link">Attendance</a>
+<a href="/staff/tasks" class="nav-link">Tasks</a>
+<a href="/staff/salary" class="nav-link active">Salary</a>
+<a href="/staff/profile" class="nav-link">Profile</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="salary-wrapper">
+
+    <div class="salary-topbar">
+
+        <div class="salary-title">
+            <h2>Salary Overview</h2>
+            <p>Your payroll history and earnings</p>
+        </div>
+
+    </div>
+
+    <div class="salary-summary-grid">
+
+        <div class="salary-summary-card">
+            <span>Total Working Days</span>
+            <h2>{{ total_present }}</h2>
+            <p>Days marked present</p>
+        </div>
+
+        <div class="salary-summary-card">
+            <span>Total Paid Salary</span>
+            <h2>₹ {{ total_paid }}</h2>
+            <p>Amount received</p>
+        </div>
+
+        <div class="salary-summary-card">
+            <span>Pending Salary</span>
+            <h2>₹ {{ total_pending }}</h2>
+            <p>Awaiting payment</p>
+        </div>
+
+        <div class="salary-summary-card">
+            <span>Total Slips</span>
+            <h2>{{ salary_slips|length }}</h2>
+            <p>Payroll records</p>
+        </div>
+
+    </div>
+
+    <div class="salary-table-card">
+
+        <div class="salary-table-top">
+
+            <div>
+                <h3>Salary History</h3>
+                <span class="salary-badge">Payroll Records</span>
+            </div>
+
+        </div>
+
+        {% if salary_slips %}
+
+        <div class="table-responsive">
+
+            <table class="salary-table">
+
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Year</th>
+                        <th>Present Days</th>
+                        <th>Per Day Salary</th>
+                        <th>Bonus</th>
+                        <th>Net Salary</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for slip in salary_slips %}
+
+                    <tr>
+                        <td>{{ slip.month }}</td>
+                        <td>{{ slip.year }}</td>
+                        <td>{{ slip.present_days }}</td>
+
+                        <td class="salary-money">
+                            ₹ {{ slip.per_day_salary }}
+                        </td>
+
+                        <td class="salary-money">
+                            ₹ {{ slip.bonus }}
+                        </td>
+
+                        <td class="salary-money">
+                            ₹ {{ slip.net_salary }}
+                        </td>
+
+                        <td>
+
+                            {% if slip.status == 'paid' %}
+                            <span class="salary-pill paid">Paid</span>
+                            {% else %}
+                            <span class="salary-pill pending">Pending</span>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="salary-empty">
+            <h3>No Salary Records</h3>
+            <p>Your payroll will appear here once generated.</p>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

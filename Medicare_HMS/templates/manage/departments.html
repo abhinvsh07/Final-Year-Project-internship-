@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Departments{% endblock %}
+{% block page_title %}Departments{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/admin" class="nav-link">Dashboard</a>
+<a href="/admin/create-user" class="nav-link">Create User</a>
+
+<div class="nav-section">
+
+    <div class="nav-section-title" data-toggle="collapse" data-target="#manageMenu">
+        Manage
+        <span class="arrow">▾</span>
+    </div>
+
+    <div id="manageMenu" class="nav-collapse open">
+
+        <a href="/admin/manage/patients" class="nav-link sub-link">Patients</a>
+        <a href="/admin/manage/doctors" class="nav-link sub-link">Doctors</a>
+        <a href="/admin/manage/staff" class="nav-link sub-link">Staff</a>
+        <a href="/admin/manage/departments" class="nav-link sub-link">Departments</a>
+
+    </div>
+
+</div>
+
+<a href="/admin/appointments" class="nav-link">Appointments</a>
+<a href="/admin/billing" class="nav-link">Billing</a>
+<a href="/admin/reports" class="nav-link">Reports</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-section">
+
+    <div class="admin-section-title">
+        {% if edit_dept %}Edit Department{% else %}Add Department{% endif %}
+    </div>
+
+    <div class="card">
+
+        <form method="POST">
+
+            {% if edit_dept %}
+            <input type="hidden" name="dept_id" value="{{ edit_dept.id }}">
+            {% endif %}
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label>Name</label>
+                    <input name="name" class="form-control"
+                           value="{{ edit_dept.name if edit_dept else '' }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Description</label>
+                    <input name="description" class="form-control"
+                           value="{{ edit_dept.description if edit_dept else '' }}">
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary w-100">
+                        {% if edit_dept %}Update Department{% else %}Add Department{% endif %}
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="admin-section">
+
+    <div class="admin-section-title">Departments</div>
+
+    <div class="card">
+
+        <table class="table">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Doctors</th>
+                    <th>Staff</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for d in departments %}
+                <tr>
+                    <td>{{ d.name }}</td>
+                    <td>{{ d.description }}</td>
+                    <td>{{ d.doctor_count }}</td>
+                    <td>{{ d.staff_count }}</td>
+                    <td>
+
+                        <a href="/admin/manage/departments?edit_id={{ d.id }}"
+                           class="btn btn-sm btn-warning">Edit</a>
+
+                        {% if d.doctor_count == 0 and d.staff_count == 0 %}
+                        <a href="/admin/manage/departments?delete_id={{ d.id }}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Delete this department?')">
+                           Delete
+                        </a>
+                        {% else %}
+                        <button class="btn btn-sm btn-secondary" disabled>Locked</button>
+                        {% endif %}
+
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

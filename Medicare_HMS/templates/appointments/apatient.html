@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Appointments{% endblock %}
+{% block page_title %}My Appointments{% endblock %}
+
+{% block content %}
+
+<div class="admin-section">
+    <div class="admin-section-title">Book Appointment</div>
+
+    <div class="card">
+        <form method="POST" action="/patient/book-appointment">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label>Doctor</label>
+                    <select name="doctor_id" class="form-control" required>
+                        <option value="">Select Doctor</option>
+                        {% for d in doctors %}
+                        <option value="{{ d.id }}">
+                            {{ d.name }} ({{ d.specialization }}) - ₹{{ d.consultation_fee }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Date & Time</label>
+                    <input type="datetime-local"
+                           name="appointment_time"
+                           class="form-control"
+                           id="appointment_time"
+                           required>
+                </div>
+
+                <div class="col-md-12">
+                    <label>Reason</label>
+                    <input name="reason" class="form-control" required>
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary w-100">Request Appointment</button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- ACTIVE -->
+<div class="admin-section">
+    <div class="admin-section-title">Active Appointments</div>
+
+    <div class="card">
+        {% if active %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Fee</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for a in active %}
+                <tr>
+                    <td>{{ a.doctor_name }}</td>
+                    <td>{{ a.appointment_time }}</td>
+                    <td>{{ a.reason }}</td>
+
+                    <td>
+                        <span class="badge
+                            {% if a.status == 'pending' %}bg-warning
+                            {% elif a.status == 'confirmed' %}bg-success
+                            {% elif a.status == 'cancelled' %}bg-danger
+                            {% else %}bg-secondary{% endif %}">
+                            {{ a.status }}
+                        </span>
+                    </td>
+
+                    <td>₹{{ a.consultation_fee }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty">None</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- HISTORY -->
+<div class="admin-section">
+    <div class="admin-section-title">History</div>
+
+    <div class="card">
+        {% if history %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Fee</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for a in history %}
+                <tr>
+                    <td>{{ a.doctor_name }}</td>
+                    <td>{{ a.appointment_time }}</td>
+                    <td>{{ a.reason }}</td>
+
+                    <td>
+                        <span class="badge bg-secondary">
+                            {{ a.status }}
+                        </span>
+                    </td>
+
+                    <td>₹{{ a.consultation_fee }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty">None</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- VALIDATION (FIXED + SIMPLIFIED) -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input = document.getElementById("appointment_time");
+
+    const now = new Date();
+
+    // STRICT: tomorrow 00:00 to enforce next-day rule cleanly
+    const minDate = new Date();
+    minDate.setDate(now.getDate() + 1);
+    minDate.setHours(0, 0, 0, 0);
+
+    function format(dt) {
+        const pad = n => String(n).padStart(2, '0');
+        return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+    }
+
+    input.min = format(new Date(minDate.setHours(8, 0, 0, 0)));
+
+    input.addEventListener("change", function () {
+
+        if (!this.value) return;
+
+        const dt = new Date(this.value);
+
+        // RULE 1: must be tomorrow or later
+        const selected = new Date(dt);
+        selected.setHours(0,0,0,0);
+
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        if (selected < tomorrow) {
+            alert("Only next-day bookings allowed");
+            this.value = "";
+            return;
+        }
+
+        // RULE 2: 8 AM - 8 PM
+        const hour = dt.getHours();
+        if (hour < 8 || hour >= 20) {
+            alert("Appointments allowed only between 8 AM and 8 PM");
+            this.value = "";
+            return;
+        }
+
+    });
+
+});
+</script>
+
+{% endblock %}

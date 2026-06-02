@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Dashboard{% endblock %}
+{% block page_title %}Doctor Dashboard{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/doctor" class="nav-link active">Dashboard</a>
+<a href="/doctor/appointments" class="nav-link">My Appointments</a>
+<a href="/doctor/my-patients" class="nav-link">My Patients</a>
+<a href="/doctor/records" class="nav-link">Medical Records</a>
+<a href="/attendance" class="nav-link">Attendance</a>
+<a href="/doctor/salary" class="nav-link">Salary</a>
+<a href="/doctor/profile" class="nav-link">Profile</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="doctor-dashboard">
+
+    <div class="dashboard-header">
+        <h2>Overview</h2>
+        <p>Clinical performance snapshot</p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card admin-metric">
+            <div class="label">Total Appointments</div>
+            <div class="value">{{ total_appointments }}</div>
+            <div class="subtext">All time records</div>
+        </div>
+
+        <div class="dashboard-card admin-metric">
+            <div class="label">Pending</div>
+            <div class="value">{{ pending_appointments }}</div>
+            <div class="subtext">Waiting for action</div>
+        </div>
+
+        <div class="dashboard-card admin-metric">
+            <div class="label">Completed</div>
+            <div class="value">{{ completed_appointments }}</div>
+            <div class="subtext">Successful visits</div>
+        </div>
+
+        <div class="dashboard-card highlight  admin-metric">
+            <div class="label">Patients</div>
+            <div class="value">{{ total_patients }}</div>
+            <div class="subtext">Unique patients handled</div>
+        </div>
+
+    </div>
+
+    <div class="section-card">
+
+        <div class="section-header">
+            <h3>Today's Appointments</h3>
+        </div>
+
+        {% if today_appointments %}
+
+        <div class="table-responsive">
+
+            <table class="modern-table">
+
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for a in today_appointments %}
+
+                    <tr>
+                        <td>{{ a.patient_name }}</td>
+                        <td>{{ a.appointment_time }}</td>
+                        <td>{{ a.reason }}</td>
+                        <td>
+                            <span class="status-pill 
+                                {% if a.status == 'pending' %}pending
+                                {% elif a.status == 'confirmed' %}confirmed
+                                {% elif a.status == 'completed' %}completed
+                                {% else %}other{% endif %}">
+                                {{ a.status }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            No appointments scheduled for today
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

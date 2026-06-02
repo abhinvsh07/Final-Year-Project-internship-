@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Profile{% endblock %}
+{% block page_title %}Staff Profile{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/staff" class="nav-link">Dashboard</a>
+<a href="/attendance" class="nav-link">Attendance</a>
+<a href="/staff/salary" class="nav-link">Salary</a>
+<a href="/staff/profile" class="nav-link active">Profile</a>
+
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+<div class="doctor-profile">
+
+<form method="POST" action="/staff/profile" class="doctor-form">
+
+    <div class="doctor-header">
+
+        <div class="doctor-avatar">
+            {{ staff.name[0]|upper if staff.name else "S" }}
+        </div>
+
+        <div class="doctor-info">
+
+            <h1>{{ staff.name or "Unknown Staff" }}</h1>
+
+            <div class="tags">
+
+                {% if staff.designation %}
+                    <span class="tag primary">{{ staff.designation }}</span>
+                {% else %}
+                    <span class="tag muted">No designation</span>
+                {% endif %}
+
+                {% if staff.department_name %}
+                    <span class="tag">{{ staff.department_name }}</span>
+                {% else %}
+                    <span class="tag muted">Unassigned department</span>
+                {% endif %}
+
+                {% if staff.shift_type %}
+                    <span class="tag">{{ staff.shift_type }}</span>
+                {% else %}
+                    <span class="tag muted">No shift</span>
+                {% endif %}
+
+            </div>
+
+            <div class="doctor-meta">
+                <div><span>Email:</span> <strong>{{ staff.email or "-" }}</strong></div>
+                <div><span>Phone:</span> <strong>{{ staff.phone or "-" }}</strong></div>
+                <div><span>Salary:</span> <strong>₹ {{ staff.per_day_salary or 0 }}</strong></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="doctor-grid">
+
+        <div class="profile-card">
+
+            <h3>Profile Details</h3>
+
+            <div class="field-grid">
+
+                <div class="field-group">
+                    <label>Name</label>
+                    <input name="name" value="{{ staff.name or '' }}" required>
+                </div>
+
+                <div class="field-group">
+                    <label>Email</label>
+                    <input name="email" type="email" value="{{ staff.email or '' }}" >
+                </div>
+
+                <div class="field-group">
+                    <label>Phone</label>
+                    <input name="phone"
+                           value="{{ staff.phone or '' }}"
+                           type="tel"
+                           pattern="[0-9]{10}"
+                           maxlength="10"
+                           inputmode="numeric"
+                           oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
+                </div>
+
+                <div class="field-group field-full">
+                    <label>Address</label>
+                    <textarea name="address">{{ staff.address or '' }}</textarea>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="profile-card">
+
+            <h3>Work Details</h3>
+
+            <div class="field-grid">
+
+                <div class="field-group">
+                    <label>Designation</label>
+                    <input name="designation" value="{{ staff.designation or '' }}">
+                </div>
+
+                <div class="field-group">
+                    <label>Shift Type</label>
+                    <input name="shift_type" value="{{ staff.shift_type or '' }}">
+                </div>
+
+                <div class="field-group">
+                    <label>Department</label>
+                    <input value="{{ staff.department_name or 'Not Assigned' }}" disabled>
+                </div>
+
+                <div class="field-group">
+                    <label>Username</label>
+                    <input value="{{ staff.username or '' }}" disabled>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="form-actions">
+        <button type="submit">Update Profile</button>
+    </div>
+
+</form>
+
+</div>
+
+{% endblock %}

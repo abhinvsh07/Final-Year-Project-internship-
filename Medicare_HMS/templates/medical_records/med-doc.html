@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Medical Workbench{% endblock %}
+{% block page_title %}Medical Workbench{% endblock %}
+
+{% block content %}
+
+<div class="admin-section">
+
+    <div class="admin-section-title">
+        Active Appointments Requiring Medical Records
+    </div>
+
+    <div class="card">
+
+        {% if appointments %}
+
+        <table class="table">
+
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for a in appointments %}
+                <tr>
+                    <td>{{ a.patient_name }}</td>
+                    <td>{{ a.appointment_time }}</td>
+                    <td>{{ a.reason }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+            <div class="empty">None</div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} mt-2">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="admin-section">
+
+    <div class="admin-section-title">
+        Create Medical Record
+    </div>
+
+    <div class="card">
+
+        <form method="POST" action="/doctor/medical-records/submit">
+
+            <div class="mb-3">
+                <label>Select Appointment</label>
+
+                <select name="appointment_id" class="form-control" required>
+
+                    <option value="">Select Appointment</option>
+
+                    {% for a in appointments %}
+                    <option value="{{ a.id }}"
+                        {% if selected_id and selected_id|int == a.id %}selected{% endif %}>
+                        {{ a.patient_name }} - {{ a.appointment_time }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="mb-3">
+                <label>Symptoms</label>
+                <textarea name="symptoms" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label>Diagnosis</label>
+                <textarea name="diagnosis" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label>Prescription</label>
+                <textarea name="prescription_notes" class="form-control"></textarea>
+            </div>
+
+            <button class="btn btn-success w-100">
+                Save & Complete Appointment
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

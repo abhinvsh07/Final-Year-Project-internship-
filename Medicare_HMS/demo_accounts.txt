@@ -1,0 +1,51 @@
+
+# Admin
+
+| Role  | Username | Password | Name         |
+| ----- | -------- | -------- | ------------ |
+| admin | admin    | admin123 | System Admin |
+
+---
+
+# Patients
+
+| Username | Password | Name         | Gender | Blood Group |
+| -------- | -------- | ------------ | ------ | ----------- |
+| p1       | p1       | Rahul Sharma | male   | O+          |
+| p2       | p2       | Priya Singh  | female | A+          |
+| p3       | p3       | Amit Verma   | male   | B+          |
+
+---
+
+# Doctors
+
+| Username | Password | Name            | Specialization    | Department       | Fee   |
+| -------- | -------- | --------------- | ----------------- | ---------------- | ----- |
+| d1       | d1       | Dr. Arjun Mehta | General Physician | General Medicine | ₹500  |
+| d2       | d2       | Dr. Neha Kapoor | Cardiologist      | Cardiology       | ₹1200 |
+| d3       | d3       | Dr. Vikram Rao  | Neurologist       | Neurology        | ₹1500 |
+
+---
+
+# Staff
+
+| Username | Password | Name          | Designation  | Department |
+| -------- | -------- | ------------- | ------------ | ---------- |
+| s1       | s1       | Riya Desk     | Receptionist | Reception  |
+| s2       | s2       | Karan Finance | Accountant   | Accounts   |
+
+---
+
+# Departments 
+
+| Department       | Type   |
+| ---------------- | ------ |
+| General Medicine | doctor |
+| Cardiology       | doctor |
+| Neurology        | doctor |
+| Reception        | staff  |
+| Accounts         | staff  |
+
+---
+
+

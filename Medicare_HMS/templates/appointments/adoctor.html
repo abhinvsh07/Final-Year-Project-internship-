@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Appointments{% endblock %}
+{% block page_title %}Appointments{% endblock %}
+
+{% block content %}
+
+<!-- ================= PENDING ================= -->
+<div class="admin-section">
+    <div class="admin-section-title">Pending Requests</div>
+
+    <div class="card">
+        {% if pending %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for a in pending %}
+                <tr>
+                    <td>{{ a.patient_name }}</td>
+                    <td>{{ a.appointment_time }}</td>
+                    <td>{{ a.reason }}</td>
+
+                    <td>
+                        <form method="POST" action="/doctor/appointment/update" style="display:inline;">
+                            <input type="hidden" name="appointment_id" value="{{ a.id }}">
+                            <input type="hidden" name="action" value="confirmed">
+                            <button class="btn btn-sm btn-success">Accept</button>
+                        </form>
+
+                        <form method="POST" action="/doctor/appointment/update" style="display:inline;">
+                            <input type="hidden" name="appointment_id" value="{{ a.id }}">
+                            <input type="hidden" name="action" value="cancelled">
+                            <button class="btn btn-sm btn-danger"
+                                onclick="return confirm('Reject this appointment?')">
+                                Reject
+                            </button>
+                        </form>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty">None</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ================= ACTIVE ================= -->
+<div class="admin-section">
+    <div class="admin-section-title">Active Appointments</div>
+
+    <div class="card">
+        {% if active %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for a in active %}
+                <tr>
+                    <td>{{ a.patient_name }}</td>
+                    <td>{{ a.appointment_time }}</td>
+                    <td>{{ a.reason }}</td>
+
+                    <td>
+                        <span class="badge bg-primary">
+                            {{ a.status }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <a href="/doctor/medical-records?appointment_id={{ a.id }}"
+                           class="btn btn-sm btn-primary">
+                            Open Record
+                        </a>
+
+                        <form method="POST" action="/doctor/appointment/update" style="display:inline;">
+                            <input type="hidden" name="appointment_id" value="{{ a.id }}">
+                            <input type="hidden" name="action" value="cancelled">
+
+                            <button class="btn btn-sm btn-danger"
+                                onclick="return confirm('Cancel this appointment?')">
+                                Cancel
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty">None</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ================= HISTORY ================= -->
+<div class="admin-section">
+    <div class="admin-section-title">History</div>
+
+    <div class="card">
+        {% if history %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for a in history %}
+                <tr>
+                    <td>{{ a.patient_name }}</td>
+                    <td>{{ a.appointment_time }}</td>
+                    <td>{{ a.reason }}</td>
+
+                    <td>
+                        <span class="badge
+                            {% if a.status == 'completed' %}bg-success
+                            {% elif a.status == 'cancelled' %}bg-danger
+                            {% else %}bg-secondary{% endif %}">
+                            {{ a.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty">None</div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

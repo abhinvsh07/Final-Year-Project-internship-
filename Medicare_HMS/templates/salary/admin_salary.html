@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block title %}Payroll Management{% endblock %}
+{% block page_title %}Payroll Management{% endblock %}
+
+{% block sidebar %}
+
+<a href="/admin/create-user" class="nav-link">Create User</a>
+
+<div class="nav-section">
+
+    <div class="nav-section-title" data-toggle="collapse" data-target="#manageMenu">
+        Manage
+        <span class="arrow">▾</span>
+    </div>
+
+    <div id="manageMenu" class="nav-collapse open">
+
+        <a href="/admin/manage/patients" class="nav-link sub-link">Patients</a>
+        <a href="/admin/manage/doctors" class="nav-link sub-link">Doctors</a>
+        <a href="/admin/manage/staff" class="nav-link sub-link">Staff</a>
+        <a href="/admin/manage/departments" class="nav-link sub-link">Departments</a>
+
+    </div>
+
+</div>
+
+<a href="/admin/salary" class="nav-link active">Payroll</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="salary-wrapper">
+
+    <div class="salary-topbar">
+
+        <div class="salary-title">
+            <h2>Payroll Center</h2>
+            <p>Generate and manage employee salaries</p>
+        </div>
+
+    </div>
+
+    <!-- FILTER -->
+
+    <div class="salary-filter-card">
+
+        <form method="GET">
+
+            <div class="salary-filter-grid">
+
+                <div class="salary-input">
+
+                    <label>Employee Type</label>
+
+                    <select name="role" required>
+
+                        <option value="doctor"
+                            {% if role_filter == 'doctor' %}selected{% endif %}>
+                            Doctors
+                        </option>
+
+                        <option value="staff"
+                            {% if role_filter == 'staff' %}selected{% endif %}>
+                            Staff
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="salary-input">
+
+                    <label>Select Month</label>
+
+                    <select name="month" required>
+
+                        {% for m in range(1,13) %}
+
+                        <option value="{{ m }}"
+                            {% if month == m %}selected{% endif %}>
+                            {{ m }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="salary-input">
+
+                    <label>Select Year</label>
+
+                    <select name="year" required>
+
+                        {% for y in range(2024,2036) %}
+
+                        <option value="{{ y }}"
+                            {% if year == y %}selected{% endif %}>
+                            {{ y }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <button type="submit" class="salary-btn">
+                        Load Payroll
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- FLASH -->
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+
+            <div class="salary-alert">
+                {{ msg }}
+            </div>
+
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- CALCULATED PAYROLL -->
+
+    <div class="salary-table-card">
+
+        <div class="salary-table-top">
+
+            <div>
+
+                <h3>Calculated Payroll</h3>
+
+                <span class="salary-badge">
+                    {{ role_filter|capitalize }} • {{ month }}/{{ year }}
+                </span>
+
+            </div>
+
+            <form method="POST">
+
+                <input type="hidden" name="month" value="{{ month }}">
+                <input type="hidden" name="year" value="{{ year }}">
+                <input type="hidden" name="role" value="{{ role_filter }}">
+
+                <button type="submit" class="salary-action-btn">
+                    Generate Slips
+                </button>
+
+            </form>
+
+        </div>
+
+        {% if payroll %}
+
+        <div class="table-responsive">
+
+            <table class="salary-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Employee</th>
+                        <th>Present</th>
+                        <th>Per Day</th>
+
+                        {% if role_filter == 'doctor' %}
+                        <th>Appointments</th>
+                        {% endif %}
+
+                        <th>Net Salary</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for row in payroll %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="employee-box">
+
+                                <div class="employee-avatar">
+                                    {{ row.name[0] }}
+                                </div>
+
+                                <div class="employee-meta">
+                                    <h4>{{ row.name }}</h4>
+                                    <p>{{ row.role }}</p>
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <td>{{ row.present_days }}</td>
+
+                        <td class="salary-money">
+                            ₹ {{ row.per_day_salary }}
+                        </td>
+
+                        {% if role_filter == 'doctor' %}
+
+                        <td class="salary-money">
+                            ₹ {{ row.appointment_earnings }}
+                        </td>
+
+                        {% endif %}
+
+                        <td class="salary-money">
+                            ₹ {{ row.net_salary }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="salary-empty">
+
+            <h3>No Payroll Data</h3>
+
+            <p>
+                No salary records available for selected filters.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- GENERATED SLIPS -->
+
+    <div class="salary-table-card" style="margin-top:24px;">
+
+        <div class="salary-table-top">
+
+            <div>
+
+                <h3>Generated Salary Slips</h3>
+
+                <span class="salary-badge">
+                    {{ role_filter|capitalize }} • {{ month }}/{{ year }}
+                </span>
+
+            </div>
+
+        </div>
+
+        {% if slips %}
+
+        <div class="table-responsive">
+
+            <table class="salary-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Employee</th>
+                        <th>Month</th>
+                        <th>Year</th>
+                        <th>Salary</th>
+                        <th>Total Paid</th>
+                        <th>Status</th>
+                        <th>Paid At</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for slip in slips %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="employee-box">
+
+                                <div class="employee-avatar">
+                                    {{ slip.name[0] }}
+                                </div>
+
+                                <div class="employee-meta">
+                                    <h4>{{ slip.name }}</h4>
+                                    <p>{{ role_filter|capitalize }}</p>
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <td>{{ slip.month }}</td>
+
+                        <td>{{ slip.year }}</td>
+
+                        <td class="salary-money">
+                            ₹ {{ slip.net_salary }}
+                        </td>
+
+                        <td class="salary-money">
+                            ₹ {{ slip.total_paid or 0 }}
+                        </td>
+
+                        <td>
+
+                            {% if slip.status == 'paid' %}
+
+                                <span class="salary-pill paid">
+                                    Paid
+                                </span>
+
+                            {% else %}
+
+                                <span class="salary-pill pending">
+                                    Pending
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if slip.paid_at %}
+
+                                {{ slip.paid_at }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if slip.status != 'paid' %}
+
+                                <a
+                                    href="/admin/salary/pay/{{ slip.id }}?month={{ month }}&year={{ year }}&role={{ role_filter }}"
+                                    class="salary-action-btn"
+                                >
+                                    Mark Paid
+                                </a>
+
+                            {% else %}
+
+                                <span class="salary-highlight">
+                                    Completed
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="salary-empty">
+
+            <h3>No Salary Slips</h3>
+
+            <p>
+                Generate payroll slips to view records here.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

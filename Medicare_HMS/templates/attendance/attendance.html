@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance{% endblock %}
+{% block page_title %}Attendance & Leaves{% endblock %}
+
+{% block content %}
+
+<div class="admin-section">
+
+    <div class="admin-section-title">Attendance History</div>
+
+    <div class="card">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    <td>{{ r.date }}</td>
+                    <td>{{ r.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="admin-section">
+
+    <div class="admin-section-title">Apply Leave</div>
+
+    <div class="card">
+
+        <form method="POST" action="/apply-leave">
+
+           <div class="mb-2">
+    <label class="form-label">From</label>
+    <input type="date"
+           name="from_date"
+           class="form-control"
+           required
+           id="from_date">
+</div>
+
+<div class="mb-2">
+    <label class="form-label">To</label>
+    <input type="date"
+           name="to_date"
+           class="form-control"
+           id="to_date"
+           required>
+</div>
+            <textarea name="reason" class="form-control mb-2" placeholder="Reason" required></textarea>
+
+            <button class="btn btn-primary w-100">
+                Submit Leave Request
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="admin-section">
+
+    <div class="admin-section-title">Leave Status</div>
+
+    <div class="card">
+
+        <table class="table">
+
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for l in leaves %}
+                <tr>
+                    <td>{{ l.from_date }}</td>
+                    <td>{{ l.to_date }}</td>
+                    <td>{{ l.reason }}</td>
+                    <td>
+                        <span class="badge
+                            {% if l.status == 'pending' %}bg-warning
+                            {% elif l.status == 'approved' %}bg-success
+                            {% else %}bg-danger{% endif %}">
+                            {{ l.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+<script>
+    const today = new Date().toISOString().split('T')[0];
+
+    document.getElementById('from_date').setAttribute('min', today);
+    document.getElementById('to_date').setAttribute('min', today);
+</script>
+{% endblock %}

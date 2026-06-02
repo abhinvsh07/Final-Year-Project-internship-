@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Patient History{% endblock %}
+{% block page_title %}Medical History{% endblock %}
+
+{% block content %}
+
+<div class="admin-section">
+
+    <div class="admin-section-title">
+        Medical History
+    </div>
+
+    <div class="card">
+
+        {% if records %}
+
+        <table class="table">
+
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Diagnosis</th>
+                    <th>Prescription</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for r in records %}
+                <tr>
+                    <td>{{ r.appointment_time }}</td>
+                    <td>{{ r.diagnosis }}</td>
+                    <td>{{ r.prescription_notes }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+            <div class="empty">None</div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

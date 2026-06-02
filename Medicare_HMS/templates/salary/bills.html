@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}My Bills{% endblock %}
+{% block page_title %}My Bills{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/patient" class="nav-link">Dashboard</a>
+<a href="/patient/appointments" class="nav-link">Appointments</a>
+<a href="/patient/bills" class="nav-link active">Bills</a>
+<a href="/patient/profile" class="nav-link">Profile</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="salary-wrapper">
+
+    <div class="salary-topbar">
+
+        <div class="salary-title">
+            <h2>Medical Bills</h2>
+            <p>Your hospital invoices and payments</p>
+        </div>
+
+    </div>
+
+    <div class="salary-summary-grid">
+
+        <div class="salary-summary-card">
+            <span>Total Bills</span>
+            <h2>{{ bills|length }}</h2>
+            <p>Generated invoices</p>
+        </div>
+
+        <div class="salary-summary-card">
+            <span>Unpaid Amount</span>
+            <h2>
+                ₹ {{ bills | selectattr("status","equalto","unpaid") | sum(attribute="total_amount") }}
+            </h2>
+            <p>Pending payments</p>
+        </div>
+
+        <div class="salary-summary-card">
+            <span>Paid Amount</span>
+            <h2>
+                ₹ {{ bills | selectattr("status","equalto","paid") | sum(attribute="total_amount") }}
+            </h2>
+            <p>Completed payments</p>
+        </div>
+
+    </div>
+
+    <div class="salary-table-card">
+
+        <div class="salary-table-top">
+
+            <div>
+                <h3>Bill History</h3>
+                <span class="salary-badge">Invoices</span>
+            </div>
+
+        </div>
+
+        {% if bills %}
+
+        <div class="table-responsive">
+
+            <table class="salary-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Doctor</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for bill in bills %}
+
+                    <tr>
+
+                        <td>#{{ bill.id }}</td>
+                        <td>{{ bill.doctor_name }}</td>
+
+                        <td class="salary-money">
+                            ₹ {{ bill.total_amount }}
+                        </td>
+
+                        <td>
+
+                            {% if bill.status == 'paid' %}
+
+                            <span class="salary-pill paid">Paid</span>
+
+                            {% else %}
+
+                            <span class="salary-pill pending">Unpaid</span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+    {{ bill.created_at }}
+
+    {% if bill.status != 'paid' %}
+
+    <a href="/patient/bill/pay/{{ bill.id }}"
+       class="btn btn-sm btn-success"
+       style="margin-left:10px;">
+        Pay
+    </a>
+
+    {% else %}
+
+    <span class="salary-pill paid" style="margin-left:10px;">
+        Paid
+    </span>
+
+    {% endif %}
+
+</td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="salary-empty">
+
+            <h3>No Bills Found</h3>
+            <p>Your medical bills will appear after appointments.</p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

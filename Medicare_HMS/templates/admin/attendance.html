@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance{% endblock %}
+{% block page_title %}Attendance Control{% endblock %}
+
+{% block sidebar %}
+<a href="/dashboard/admin" class="nav-link">Dashboard</a>
+<a href="/admin/attendance" class="nav-link active">Attendance</a>
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+<div class="page attendance-page">
+
+<form method="GET" class="filters-card">
+
+    <div class="filter-group salary-input">
+        <label>User</label>
+        <select name="user_id">
+            <option value="">Select User</option>
+            {% for u in users %}
+                <option value="{{ u.id }}" {% if user_id==u.id|string %}selected{% endif %}>
+                    {{ u.name }} ({{ u.role }})
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit" class="btn-primary">View Attendance</button>
+
+</form>
+
+{% if user_id %}
+
+<div class="grid-2">
+
+    <div class="card">
+        <h3>Attendance</h3>
+
+        {% if attendance %}
+        <table class="table">
+            <tr><th>Date</th><th>Status</th></tr>
+            {% for a in attendance %}
+            <tr>
+                <td>{{ a.date }}</td>
+                <td><span class="tag">{{ a.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <div class="empty">None</div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Pending Leaves</h3>
+
+        {% if leaves_pending %}
+        <table class="table">
+            <tr><th>From</th><th>To</th><th>Reason</th><th>Action</th></tr>
+            {% for l in leaves_pending %}
+            <tr>
+                <td>{{ l.from_date }}</td>
+                <td>{{ l.to_date }}</td>
+                <td>{{ l.reason }}</td>
+                <td>
+                    <a href="/admin/leave/approve/{{ l.id }}" class="btn-small approve">Approve</a>
+                    <a href="/admin/leave/reject/{{ l.id }}" class="btn-small reject">Reject</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <div class="empty">None</div>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="card full">
+
+    <h3>Leave History</h3>
+
+    {% if leaves_history %}
+    <table class="table">
+        <tr><th>From</th><th>To</th><th>Reason</th><th>Status</th></tr>
+        {% for l in leaves_history %}
+        <tr>
+            <td>{{ l.from_date }}</td>
+            <td>{{ l.to_date }}</td>
+            <td>{{ l.reason }}</td>
+            <td><span class="tag">{{ l.status }}</span></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="empty">None</div>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

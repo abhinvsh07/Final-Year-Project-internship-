@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Profile{% endblock %}
+{% block page_title %}Patient Profile{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/patient" class="nav-link">Dashboard</a>
+<a href="/patient/appointments" class="nav-link">Appointments</a>
+<a href="/patient/profile" class="nav-link active">Profile</a>
+
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+<div class="doctor-profile">
+
+<form method="POST" class="doctor-form">
+
+    <div class="doctor-header">
+
+        <div class="doctor-avatar">
+            {{ patient.name[0]|upper if patient.name else "P" }}
+        </div>
+
+        <div class="doctor-info">
+
+            <h1>{{ patient.name or "" }}</h1>
+
+            <div class="doctor-meta">
+                <div><span>Username:</span> <strong>{{ patient.username or "-" }}</strong></div>
+                <div><span>Email:</span> <strong>{{ patient.email or "-" }}</strong></div>
+                <div><span>Phone:</span> <strong>{{ patient.phone or "-" }}</strong></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="doctor-grid">
+
+        <div class="profile-card">
+
+            <h3>Profile Details</h3>
+
+            <div class="field-grid">
+
+                <div class="field-group">
+                    <label>Name</label>
+                    <input name="name" value="{{ patient.name or '' }}" required>
+                </div>
+
+                <div class="field-group">
+                    <label>Username</label>
+                    <input value="{{ patient.username or '' }}" disabled>
+                </div>
+
+                <div class="field-group">
+                    <label>Email</label>
+                    <input name="email" type="email" value="{{ patient.email or '' }}" required>
+                </div>
+
+                <div class="field-group">
+                    <label>Phone</label>
+                    <input name="phone" value="{{ patient.phone or '' }}"
+                           maxlength="10"
+                           oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
+                </div>
+
+                <div class="field-group">
+                    <label>Gender</label>
+                    <select name="gender">
+                        <option value="">Select</option>
+                        <option value="male" {% if patient.gender=='male' %}selected{% endif %}>Male</option>
+                        <option value="female" {% if patient.gender=='female' %}selected{% endif %}>Female</option>
+                        <option value="other" {% if patient.gender=='other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label>Blood Group</label>
+                    <select name="blood_group">
+                        <option value="">Select</option>
+                        {% for bg in ['A+','A-','B+','B-','O+','O-','AB+','AB-'] %}
+                            <option value="{{ bg }}" {% if patient.blood_group==bg %}selected{% endif %}>
+                                {{ bg }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label>DOB</label>
+                    <input type="date" name="dob" value="{{ patient.dob or '' }}">
+                </div>
+
+                <div class="field-group field-full">
+                    <label>Address</label>
+                    <textarea name="address">{{ patient.address or '' }}</textarea>
+                </div>
+
+                <div class="field-group field-full">
+                    <label>Emergency Contact</label>
+                    <input name="emergency_contact" value="{{ patient.emergency_contact or '' }}">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="form-actions">
+        <button type="submit">Update Profile</button>
+    </div>
+
+</form>
+
+</div>
+
+{% endblock %}

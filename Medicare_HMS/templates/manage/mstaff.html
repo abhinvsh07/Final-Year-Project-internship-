@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Staff{% endblock %}
+{% block page_title %}Staff{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/admin" class="nav-link">Dashboard</a>
+<a href="/admin/create-user" class="nav-link">Create User</a>
+
+<div class="nav-section">
+
+    <div class="nav-section-title" data-toggle="collapse" data-target="#manageMenu">
+        Manage
+        <span class="arrow">▾</span>
+    </div>
+
+    <div id="manageMenu" class="nav-collapse open">
+
+        <a href="/admin/manage/patients" class="nav-link sub-link">Patients</a>
+        <a href="/admin/manage/doctors" class="nav-link sub-link">Doctors</a>
+        <a href="/admin/manage/staff" class="nav-link sub-link">Staff</a>
+        <a href="/admin/manage/departments" class="nav-link sub-link">Departments</a>
+
+    </div>
+
+</div>
+
+<a href="/admin/appointments" class="nav-link">Appointments</a>
+<a href="/admin/billing" class="nav-link">Billing</a>
+<a href="/admin/reports" class="nav-link">Reports</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-section">
+
+    <div class="admin-section-title">Staff</div>
+
+    <div class="card">
+
+        <table class="table">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Designation</th>
+                    <th>Department</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for s in staff %}
+                <tr>
+
+                    <td>{{ s.name }}</td>
+                    <td>{{ s.username }}</td>
+                    <td>{{ s.email }}</td>
+                    <td>{{ s.designation }}</td>
+                    <td>{{ s.department_name or "N/A" }}</td>
+
+                    <td>
+
+                        <a href="/admin/manage/staff?edit_id={{ s.id }}"
+                           class="btn btn-sm btn-warning">Edit</a>
+
+                        <a href="/admin/manage/staff?delete_id={{ s.id }}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Delete this staff?')">
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

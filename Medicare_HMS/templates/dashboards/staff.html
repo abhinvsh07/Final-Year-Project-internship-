@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Dashboard{% endblock %}
+{% block page_title %}Staff Dashboard{% endblock %}
+
+{% block sidebar %}
+
+<a href="/dashboard/staff" class="nav-link active">Dashboard</a>
+<a href="/attendance" class="nav-link">Attendance</a>
+<a href="/staff/salary" class="nav-link">Salary</a>
+<a href="/staff/profile" class="nav-link">Profile</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="staff-dashboard">
+
+    <div class="dashboard-header">
+        <h2>Overview</h2>
+        <p>Monthly performance snapshot</p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card admin-metric">
+            <div class="card-label admn">Attendance</div>
+            <div class="card-value">
+                {{ present_days }} / {{ total_days }}
+            </div>
+            <div class="card-subtext">Present days this month</div>
+        </div>
+
+        <div class="dashboard-card admin-metric">
+            <div class="card-label">Leaves</div>
+            <div class="card-value">
+                {{ leaves_count }}
+            </div>
+            <div class="card-subtext">Approved leave requests</div>
+        </div>
+
+        <div class="dashboard-card highlight admin-metric">
+            <div class="card-label">Salary</div>
+            <div class="card-value">
+                ₹ {{ salary }}
+            </div>
+            <div class="card-subtext">Estimated monthly earnings</div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

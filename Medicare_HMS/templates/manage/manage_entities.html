@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page">
+    <div class="header">
+        <h2>{{ entity|capitalize }}</h2>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-container flash-message">
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    {% if entity == "departments" %}
+    <form method="POST" class="create-form">
+        <input name="name" placeholder="Department Name" required>
+        <input name="description" placeholder="Description">
+        <select name="department_type" required>
+            <option value="doctor">Doctor</option>
+            <option value="staff">Staff</option>
+        </select>
+        <button type="submit">Add Department</button>
+    </form>
+    {% endif %}
+
+    <div class="table-box">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    {% if entity != "departments" %}
+                    <th>Username</th>
+                    <th>Email</th>
+                    {% endif %}
+
+                    {% if entity == "patients" %}
+                        <th>Gender</th>
+                        <th>Blood</th>
+                        <th>Emergency</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                    {% elif entity == "doctors" %}
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Specialization</th>
+                        <th>Department</th>
+                        <th>Salary</th>
+                        {% elif entity == "staff" %}
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Designation</th>
+                        <th>Department</th>
+                        <th>Salary</th>
+                    {% elif entity == "departments" %}
+                        <th>Description</th>
+                        <th>Type</th>
+                    {% endif %}
+
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for row in data %}
+                <tr>
+                    <td>{{ row.name }}</td>
+                    {% if entity!="departments" %}
+                    <td>{{ row.username if row.username is defined else "" }}</td>
+                    <td>{{ row.email if row.email is defined else "" }}</td>
+                    {% endif %}
+
+                    {% if entity == "patients" %}
+                        <td>{{ row.gender }}</td>
+                        <td>{{ row.blood_group }}</td>
+                        <td>{{ row.emergency_contact }}</td>
+                        <td>{{ row.phone }}</td>
+                        <td>{{ row.address }}</td>
+                    {% elif entity == "doctors" %}
+                        <td>{{ row.phone }}</td>
+                        <td>{{ row.address }}</td>
+                        <td>{{ row.specialization }}</td>
+                        <td>{{ row.department_name or "" }}</td>
+                        <td>{{ row.per_day_salary or "" }}</td>
+                    {% elif entity == "staff" %}
+                        <td>{{ row.phone }}</td>
+                        <td>{{ row.address }}</td>
+                        <td>{{ row.designation }}</td>
+                        <td>{{ row.department_name or "" }}</td>
+                        <td>{{ row.per_day_salary or "" }}</td>
+                    {% elif entity == "departments" %}
+                        <td>{{ row.description }}</td>
+                        <td>{{ row.department_type }}</td>
+                    {% endif %}
+
+                    <td>
+                        <button type="button" class="edit-btn"
+                            data-id="{{ row.id }}"
+                            data-name="{{ row.name or '' }}"
+                            data-username="{{ row.username or '' }}"
+                            data-email="{{ row.email or '' }}"
+                            data-phone="{{ row.phone or '' }}"
+                            data-address="{{ row.address or '' }}"
+                            data-gender="{{ row.gender or '' }}"
+                            data-blood-group="{{ row.blood_group or '' }}"
+                            data-emergency-contact="{{ row.emergency_contact or '' }}"
+                            data-specialization="{{ row.specialization or '' }}"
+                            data-designation="{{ row.designation or '' }}"
+                            data-department-id="{{ row.department_id or '' }}"
+                            data-description="{{ row.description or '' }}"
+                            data-salary="{{ row.per_day_salary or '' }}"
+                            data-department-type="{{ row.department_type or '' }}">
+                            Edit
+                        </button>
+
+                        <a href="?delete_id={{ row.id }}" class="delete-btn" onclick="return confirm('Delete this record?')">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if entity == "patients" %}
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <form method="POST">
+            <input type="hidden" name="id" id="p_id">
+
+            <input name="name" id="p_name" placeholder="Name">
+            <input name="username" id="p_username" placeholder="Username" required>
+            <input name="email" id="p_email" placeholder="Email">
+            <input name="phone" id="p_phone" placeholder="Phone" pattern="[0-9]{10}" maxlength="10" inputmode="numeric">
+            <input name="address" id="p_address" placeholder="Address">
+
+            <select name="gender" id="p_gender">
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+
+            <select name="blood_group" id="p_blood_group">
+                <option value="">Select Blood Group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+            </select>
+
+            <input name="emergency_contact" id="p_emergency_contact" placeholder="Emergency Contact" pattern="[0-9]{10}" maxlength="10" inputmode="numeric">
+
+            <div class="modal-actions">
+                <button type="submit" class="btn-save">Save</button>
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% if entity == "doctors" %}
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <form method="POST">
+            <input type="hidden" name="id" id="d_id">
+
+            <input name="name" id="d_name" placeholder="Name">
+            <input name="username" id="d_username" placeholder="Username" required>
+            <input name="email" id="d_email" placeholder="Email">
+            <input name="phone" id="d_phone" placeholder="Phone" pattern="[0-9]{10}" maxlength="10" inputmode="numeric">
+            <input name="address" id="d_address" placeholder="Address">
+            <input name="specialization" id="d_specialization" placeholder="Specialization">
+            <input name="salary" id="d_per_day_salary" placeholder="Salary" type="number">
+            
+            <select name="department_id" id="d_department_id">
+                <option value="">Select Department</option>
+                {% for d in doctor_departments %}
+                <option value="{{ d.id }}">{{ d.name }}</option>
+                {% endfor %}
+            </select>
+            
+            <div class="modal-actions">
+                <button type="submit" class="btn-save">Save</button>
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% if entity == "staff" %}
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <form method="POST">
+            <input type="hidden" name="id" id="s_id">
+            
+            <input name="name" id="s_name" placeholder="Name">
+            <input name="username" id="s_username" placeholder="Username" required>
+            <input name="email" id="s_email" placeholder="Email">
+            <input name="phone" id="s_phone" placeholder="Phone" pattern="[0-9]{10}" maxlength="10" inputmode="numeric">
+            <input name="address" id="s_address" placeholder="Address">
+            <input name="designation" id="s_designation" placeholder="Designation">
+            <input name="salary" id="s_per_day_salary" placeholder="Salary" type="number">
+            
+            <select name="department_id" id="s_department_id">
+                <option value="">Select Department</option>
+                {% for d in staff_departments %}
+                    <option value="{{ d.id }}">{{ d.name }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn-save">Save</button>
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% if entity == "departments" %}
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <form method="POST">
+            <input type="hidden" name="id" id="dept_id">
+
+            <input name="name" id="dept_name" placeholder="Department Name">
+            <input name="description" id="dept_description" placeholder="Description">
+
+            <select name="department_type" id="dept_type">
+                <option value="">Select Type</option>
+                <option value="doctor">Doctor</option>
+                <option value="staff">Staff</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn-save">Save</button>
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<script>
+const modal = document.getElementById("modal");
+
+document.querySelectorAll(".edit-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const e = "{{ entity }}";
+
+        if (e === "patients") {
+            document.getElementById("p_id").value = btn.dataset.id || "";
+            document.getElementById("p_name").value = btn.dataset.name || "";
+            document.getElementById("p_username").value = btn.dataset.username || "";
+            document.getElementById("p_email").value = btn.dataset.email || "";
+            document.getElementById("p_phone").value = btn.dataset.phone || "";
+            document.getElementById("p_address").value = btn.dataset.address || "";
+            document.getElementById("p_gender").value = btn.dataset.gender || "";
+            document.getElementById("p_blood_group").value = btn.dataset.bloodGroup || "";
+            document.getElementById("p_emergency_contact").value = btn.dataset.emergencyContact || "";
+        }
+
+        if (e === "doctors") {
+            document.getElementById("d_id").value = btn.dataset.id || "";
+            document.getElementById("d_name").value = btn.dataset.name || "";
+            document.getElementById("d_username").value = btn.dataset.username || "";
+            document.getElementById("d_email").value = btn.dataset.email || "";
+            document.getElementById("d_phone").value = btn.dataset.phone || "";
+            document.getElementById("d_address").value = btn.dataset.address || "";
+            document.getElementById("d_specialization").value = btn.dataset.specialization || "";
+            document.getElementById("d_department_id").value = btn.dataset.departmentId || ""; 
+            document.getElementById("d_per_day_salary").value = btn.dataset.salary || ""; 
+        }
+        
+        if (e === "staff") {
+            document.getElementById("s_id").value = btn.dataset.id || "";
+            document.getElementById("s_name").value = btn.dataset.name || "";
+            document.getElementById("s_username").value = btn.dataset.username || "";
+            document.getElementById("s_email").value = btn.dataset.email || "";
+            document.getElementById("s_phone").value = btn.dataset.phone || "";
+            document.getElementById("s_address").value = btn.dataset.address || "";
+            document.getElementById("s_designation").value = btn.dataset.designation || "";
+            document.getElementById("s_department_id").value = btn.dataset.departmentId || "";
+            document.getElementById("s_per_day_salary").value = btn.dataset.salary || ""; 
+        }
+
+        if (e === "departments") {
+            document.getElementById("dept_id").value = btn.dataset.id || "";
+            document.getElementById("dept_name").value = btn.dataset.name || "";
+            document.getElementById("dept_description").value = btn.dataset.description || "";
+            document.getElementById("dept_type").value = btn.dataset.departmentType || "";
+        }
+
+        modal.style.display = "flex";
+    });
+});
+
+function closeModal() {
+    modal.style.display = "none";
+}
+</script>
+
+{% endblock %}

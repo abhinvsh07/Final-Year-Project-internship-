@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}MediCare{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">M</div>
+            <div class="brand-text">MediCare</div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            {% set role = session.get('role') %}
+
+            <div class="sidebar-inner">
+
+                {% if role == 'admin' %}
+
+                    <a href="/dashboard/admin" class="nav-link">Dashboard</a>
+                    <a href="/admin/create-user" class="nav-link">Create User</a>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title" data-toggle="collapse" data-target="#manageMenu">
+                            Manage <span class="arrow">▾</span>
+                        </div>
+
+                        <div id="manageMenu" class="nav-collapse open">
+                            <a href="/admin/manage/patients" class="nav-link sub-link">Patients</a>
+                            <a href="/admin/manage/doctors" class="nav-link sub-link">Doctors</a>
+                            <a href="/admin/manage/staff" class="nav-link sub-link">Staff</a>
+                            <a href="/admin/manage/departments" class="nav-link sub-link">Departments</a>
+                        </div>
+                    </div>
+
+                    <a href="/admin/salary" class="nav-link">Payroll</a>
+                    <a href="/admin/attendance" class="nav-link">Attendance</a>
+
+                {% elif role == 'doctor' %}
+
+                    <a href="/dashboard/doctor" class="nav-link">Dashboard</a>
+                    <a href="/doctor/appointments" class="nav-link">Appointments</a>
+                    <a href="/doctor/records" class="nav-link">Medical Records</a>
+                    <a href="/doctor/my-patients" class="nav-link">My Patients</a>
+                    <a href="/attendance" class="nav-link">Attendance</a>
+                    <a href="/doctor/salary" class="nav-link">Salary</a>
+                    <a href="/doctor/profile" class="nav-link">Profile</a>
+
+                {% elif role == 'staff' %}
+
+                    <a href="/dashboard/staff" class="nav-link">Dashboard</a>
+                    <a href="/attendance" class="nav-link">Attendance</a>
+                    <a href="/staff/salary" class="nav-link">Salary</a>
+                    <a href="/staff/profile" class="nav-link">Profile</a>
+
+                {% elif role == 'patient' %}
+
+                    <a href="/dashboard/patient" class="nav-link">Dashboard</a>
+                    <a href="/patient/appointments" class="nav-link">Appointments</a>
+                    <a href="/patient/bills" class="nav-link">Bills</a>
+                    <a href="/patient/medical-records" class="nav-link">Medical Records</a>
+                    <a href="/patient/profile" class="nav-link">Profile</a>
+
+                {% endif %}
+
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="/logout" class="logout-link">Logout</a>
+            </div>
+
+        </nav>
+
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h4 class="page-title">{% block page_title %}{% endblock %}</h4>
+                <p class="page-subtitle">Hospital Management System</p>
+            </div>
+
+            <div class="user-box">
+                <span>{{ session.get('role', 'User')|capitalize }}</span>
+            </div>
+
+        </header>
+
+        <section class="content-area">
+            {% block content %}{% endblock %}
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+document.querySelectorAll("[data-toggle='collapse']").forEach(el => {
+    el.addEventListener("click", function () {
+        const target = document.querySelector(this.dataset.target);
+        target.classList.toggle("open");
+        this.querySelector(".arrow").classList.toggle("rotated");
+    });
+});
+</script>
+
+</body>
+</html>

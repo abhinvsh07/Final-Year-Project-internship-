@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Create User{% endblock %}
+{% block page_title %}Create User{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+            {% if messages %}
+
+                <div class="flash-message">
+                    {{ messages[0] }}
+                </div>
+
+            {% endif %}
+        {% endwith %}
+<div class="admin-section">
+
+    <div class="admin-section-title">Create Account</div>
+
+    <div class="card">
+
+        <form method="POST" action="/admin/create-user">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label>Full Name</label>
+                    <input name="name" class="form-control" required value="{{ request.form.get('name','') }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label>Email</label>
+                    <input name="email" class="form-control" required value="{{ request.form.get('email','') }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label>Username</label>
+                    <input name="username" class="form-control" required value="{{ request.form.get('username','') }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label>Password</label>
+                    <input name="password" type="password" class="form-control" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Role</label>
+                    <select name="role" id="roleSelect" class="form-control" required>
+                        <option value="">Select Role</option>
+                        <option value="doctor" {% if request.form.get('role') == 'doctor' %}selected{% endif %}>Doctor</option>
+                        <option value="staff" {% if request.form.get('role') == 'staff' %}selected{% endif %}>Staff</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+    <label>Department</label>
+
+    <select name="department_id" id="departmentSelect" class="form-control">
+        <option value="">Select Department</option>
+
+        {% for d in departments %}
+            <option value="{{ d.id }}"
+                    data-type="{{ d.department_type }}"
+                    {% if request.form.get('department_id') == d.id|string %}selected{% endif %}>
+                {{ d.name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+                <div class="col-md-6 role-field doctor-field" style="display:none;">
+                    <label>Specialization</label>
+                    <input name="specialization" class="form-control" value="{{ request.form.get('specialization','') }}">
+                </div>
+
+                <div class="col-md-6 role-field staff-field" style="display:none;">
+                    <label>Designation</label>
+                    <input name="designation" class="form-control" value="{{ request.form.get('designation','') }}">
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary w-100">Create User</button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+const roleSelect = document.getElementById("roleSelect");
+const departmentSelect = document.getElementById("departmentSelect");
+
+const doctorFields = document.querySelectorAll(".doctor-field");
+const staffFields = document.querySelectorAll(".staff-field");
+
+function toggleRoleFields(role) {
+
+    doctorFields.forEach(el => el.style.display = "none");
+    staffFields.forEach(el => el.style.display = "none");
+
+    if (role === "doctor") {
+        doctorFields.forEach(el => el.style.display = "block");
+    }
+
+    if (role === "staff") {
+        staffFields.forEach(el => el.style.display = "block");
+    }
+
+    filterDepartments(role);
+}
+
+function filterDepartments(role) {
+
+    const options = departmentSelect.querySelectorAll("option");
+
+    options.forEach(opt => {
+        const type = opt.getAttribute("data-type");
+
+        if (!opt.value) return; // keep placeholder
+
+        if (role === "" || type === role) {
+            opt.style.display = "block";
+        } else {
+            opt.style.display = "none";
+        }
+    });
+
+    departmentSelect.value = "";
+}
+
+roleSelect.addEventListener("change", function () {
+    toggleRoleFields(this.value);
+});
+
+toggleRoleFields(roleSelect.value);
+</script>
+
+{% endblock %}
